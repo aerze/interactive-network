@@ -1,15 +1,15 @@
-import { Device } from "../game-objects/Device";
+import { BaseDevice } from "../devices/base-device";
 import { BaseMode } from "./base-mode";
 
 /**
  * Device Mode
  * √ place devices
  * √ drag and move devices
- * √ select which device to place
+ * - select which device to place
  * √ delete a device and all related links
  */
 export class DeviceMode extends BaseMode {
-  deviceType: string = "vpn";
+  deviceType: string = "server_proxy";
 
   handleDrag(pointer: Phaser.Input.Pointer, gob: Phaser.GameObjects.Container, dragX: number, dragY: number) {
     // ignore non device items
@@ -18,7 +18,7 @@ export class DeviceMode extends BaseMode {
     gob.y = dragY;
   }
 
-  handleGameObjectDown(pointer: Phaser.Input.Pointer, device: Device, event: Phaser.Types.Input.EventData) {
+  handleGameObjectDown(pointer: Phaser.Input.Pointer, device: BaseDevice, event: Phaser.Types.Input.EventData) {
     if (device.name !== "device") return;
     event.stopPropagation();
     if (pointer.rightButtonDown()) {

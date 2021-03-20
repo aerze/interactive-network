@@ -1,5 +1,4 @@
-import { Link } from "../device-manager";
-import { Device } from "../game-objects/Device";
+import { BaseDevice } from "../devices/base-device";
 import { BaseMode } from "./base-mode";
 
 /**
@@ -8,10 +7,10 @@ import { BaseMode } from "./base-mode";
  * √ delete link
  */
 export class LinkMode extends BaseMode {
-  device1: Device;
-  device2: Device;
-  removeDevice1: Device;
-  removeDevice2: Device;
+  device1: BaseDevice;
+  device2: BaseDevice;
+  removeDevice1: BaseDevice;
+  removeDevice2: BaseDevice;
 
   resetAdd() {
     this.device1 = null;
@@ -23,7 +22,7 @@ export class LinkMode extends BaseMode {
     this.removeDevice2 = null;
   }
 
-  handleGameObjectDown(pointer: Phaser.Input.Pointer, device: Device, event: Phaser.Types.Input.EventData) {
+  handleGameObjectDown(pointer: Phaser.Input.Pointer, device: BaseDevice, event: Phaser.Types.Input.EventData) {
     if (device.name !== "device") return;
 
     if (pointer.leftButtonDown()) {

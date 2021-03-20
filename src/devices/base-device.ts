@@ -8,7 +8,7 @@ export interface IDeviceOptions {
   y?: number;
 }
 
-export class Device extends Phaser.GameObjects.Container {
+export class BaseDevice extends Phaser.GameObjects.Container {
   static ID_COUNTER = 100;
   static HOVER_TINT: number = 0x444499;
   static defaultOptions: IDeviceOptions = {
@@ -25,17 +25,19 @@ export class Device extends Phaser.GameObjects.Container {
   };
 
   id: string;
+  deviceType: string;
   deviceManager: DeviceManager;
   icon: Phaser.GameObjects.Sprite;
   text: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, deviceManager: DeviceManager, options: IDeviceOptions) {
     // fill out options
-    const opts = { ...Device.defaultOptions, ...options };
+    const opts = { ...BaseDevice.defaultOptions, ...options };
 
     super(scene, options.x, options.y);
-    this.id = (Device.ID_COUNTER++).toString();
+    this.id = (BaseDevice.ID_COUNTER++).toString();
     this.name = "device";
+    this.deviceType = "";
     this.deviceManager = deviceManager;
 
     this.setPosition(options.x, options.y);
@@ -44,7 +46,7 @@ export class Device extends Phaser.GameObjects.Container {
     this.icon = scene.add.sprite(0, 0, opts.type);
 
     const textOffset = this.icon.height / 2;
-    this.text = scene.add.text(0, textOffset, opts.type, Device.TextStyle);
+    this.text = scene.add.text(0, textOffset, opts.type, BaseDevice.TextStyle);
     this.text.setOrigin();
 
     // add objects to container
@@ -61,19 +63,11 @@ export class Device extends Phaser.GameObjects.Container {
     scene.input.setDraggable(this);
 
     this.on("pointerover", () => {
-      this.icon.setTint(Device.HOVER_TINT);
+      this.icon.setTint(BaseDevice.HOVER_TINT);
     });
 
     this.on("pointerout", () => {
       this.icon.clearTint();
     });
   }
-
-  handleIncomingPacket(packet, sourceDevice) {
-    // this.devices = [{ target, soruce: this }];
-  }
-
-  handleOutgoingPacket(packet, targetDevice) {}
-
-  handleKill() {}
 }

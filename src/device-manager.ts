@@ -1,12 +1,12 @@
-import { Device, IDeviceOptions } from "./game-objects/Device";
+import { BaseDevice, IDeviceOptions } from "./devices/base-device";
 
 export interface ILinkOptions {
-  source: Device;
-  target: Device;
+  source: BaseDevice;
+  target: BaseDevice;
 }
 
 export class Link {
-  static makeId(source: Device, target: Device) {
+  static makeId(source: BaseDevice, target: BaseDevice) {
     return `${source.id}:${target.id}`;
   }
 
@@ -14,8 +14,8 @@ export class Link {
   deviceManager: DeviceManager;
 
   id: string;
-  source: Device;
-  target: Device;
+  source: BaseDevice;
+  target: BaseDevice;
   path: Phaser.Curves.Path;
   line: Phaser.Curves.Line;
 
@@ -44,7 +44,7 @@ export class Link {
     this.line = null;
   }
 
-  hasDevice(device: Device) {
+  hasDevice(device: BaseDevice) {
     return this.source === device || this.target === device;
   }
 }
@@ -54,7 +54,7 @@ export class DeviceManager {
 
   graphics: Phaser.GameObjects.Graphics;
   links: Map<string, Link>;
-  devices: Map<string, Device>;
+  devices: Map<string, BaseDevice>;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -63,13 +63,13 @@ export class DeviceManager {
   }
 
   addDevice(options: IDeviceOptions) {
-    const device = new Device(this.scene, this, options);
+    const device = new BaseDevice(this.scene, this, options);
     this.devices.set(device.id, device);
     this.scene.add.existing(device);
     return device;
   }
 
-  removeDevice(device: Device) {
+  removeDevice(device: BaseDevice) {
     this.devices.delete(device.id);
     this.links.forEach((link) => {
       if (link.hasDevice(device)) {
@@ -79,7 +79,7 @@ export class DeviceManager {
     device.destroy();
   }
 
-  addLink(sourceDevice: Device | string, targetDevice: Device | string) {
+  addLink(sourceDevice: BaseDevice | string, targetDevice: BaseDevice | string) {
     const source = typeof sourceDevice === "string" ? this.devices.get(sourceDevice) : sourceDevice;
     const target = typeof targetDevice === "string" ? this.devices.get(targetDevice) : targetDevice;
     if (!source || !target) return;

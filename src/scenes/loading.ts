@@ -1,5 +1,5 @@
 import "phaser";
-import iconList from "../icon-list.js";
+import iconList from "../icon-list";
 
 export default class Loading extends Phaser.Scene {
   constructor() {
@@ -68,10 +68,12 @@ export default class Loading extends Phaser.Scene {
     this.load.glsl("stars", "assets/starfields.glsl.js");
 
     const svgSizeConfig = { width: 120, height: 120 };
+    console.groupCollapsed("icon names");
     for (const icon of iconList) {
       console.log(icon.name);
       this.load.svg(icon.name, `assets/icons/${icon.filename}`, svgSizeConfig);
     }
+    console.groupEnd();
   }
 
   create() {

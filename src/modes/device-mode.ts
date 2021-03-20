@@ -1,3 +1,4 @@
+import { Device } from "../game-objects/Device";
 import { BaseMode } from "./base-mode";
 
 /**
@@ -5,7 +6,7 @@ import { BaseMode } from "./base-mode";
  * √ place devices
  * √ drag and move devices
  * √ select which device to place
- * - delete a device and all related links
+ * √ delete a device and all related links
  */
 export class DeviceMode extends BaseMode {
   deviceType: string = "vpn";
@@ -17,6 +18,14 @@ export class DeviceMode extends BaseMode {
     gob.y = dragY;
   }
 
+  handleGameObjectDown(pointer: Phaser.Input.Pointer, device: Device, event: Phaser.Types.Input.EventData) {
+    if (device.name !== "device") return;
+    event.stopPropagation();
+    if (pointer.rightButtonDown()) {
+      this.deviceManager.removeDevice(device);
+    }
+  }
+
   handlePointerDown(pointer: Phaser.Input.Pointer) {
     // ignore if dragging
     if (this.scene.input.getDragState(pointer) > 0) return;
@@ -26,11 +35,13 @@ export class DeviceMode extends BaseMode {
 
   create() {
     this.scene.input.on(Phaser.Input.Events.DRAG, this.handleDrag, this);
+    this.scene.input.on(Phaser.Input.Events.GAMEOBJECT_DOWN, this.handleGameObjectDown, this);
     this.scene.input.on(Phaser.Input.Events.POINTER_DOWN, this.handlePointerDown, this);
   }
 
   destroy() {
     this.scene.input.off(Phaser.Input.Events.DRAG, this.handleDrag, this);
+    this.scene.input.off(Phaser.Input.Events.GAMEOBJECT_DOWN, this.handleGameObjectDown, this);
     this.scene.input.off(Phaser.Input.Events.POINTER_DOWN, this.handlePointerDown, this);
   }
 }

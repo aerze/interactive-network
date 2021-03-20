@@ -33,6 +33,10 @@ export class Main extends Phaser.Scene {
   }
 
   create() {
+    this.game.canvas.oncontextmenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
     this.deviceManager.create();
     this.modeManager.create();
     // this.g = this.add.graphics();

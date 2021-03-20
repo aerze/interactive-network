@@ -38,6 +38,15 @@ export class Link {
     this.line.p1.set(this.target.x, this.target.y);
     this.path.draw(this.deviceManager.graphics);
   }
+
+  destroy() {
+    this.path.destroy();
+    this.line = null;
+  }
+
+  hasDevice(device: Device) {
+    return this.source === device || this.target === device;
+  }
 }
 
 export class DeviceManager {
@@ -60,6 +69,16 @@ export class DeviceManager {
     return device;
   }
 
+  removeDevice(device: Device) {
+    this.devices.delete(device.id);
+    this.links.forEach((link) => {
+      if (link.hasDevice(device)) {
+        this.removeLink(link);
+      }
+    });
+    device.destroy();
+  }
+
   addLink(sourceDevice: Device | string, targetDevice: Device | string) {
     const source = typeof sourceDevice === "string" ? this.devices.get(sourceDevice) : sourceDevice;
     const target = typeof targetDevice === "string" ? this.devices.get(targetDevice) : targetDevice;
@@ -72,13 +91,26 @@ export class DeviceManager {
     this.links.set(link.id, link);
   }
 
+  findLink(device1, device2) {
+    const link1 = this.links.get(Link.makeId(device1, device2));
+    if (link1) return link1;
+    const link2 = this.links.get(Link.makeId(device2, device1));
+    if (link2) return link2;
+    return null;
+  }
+
+  removeLink(link) {
+    this.links.delete(link.id);
+    link.destroy();
+  }
+
   create() {
     this.graphics = this.scene.add.graphics();
   }
 
   update() {
     this.graphics.clear();
-    this.graphics.lineStyle(6, 0x000000, 1);
+    this.graphics.lineStyle(6, 0xffffff, 1);
     this.links.forEach((link) => link.update());
   }
 }

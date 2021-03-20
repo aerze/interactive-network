@@ -1,31 +1,63 @@
+import { Link } from "../device-manager";
 import { Device } from "../game-objects/Device";
 import { BaseMode } from "./base-mode";
 
 /**
  * Link Mode
  * √ connect two devices
- * - delete link
+ * √ delete link
  */
 export class LinkMode extends BaseMode {
   device1: Device;
   device2: Device;
+  removeDevice1: Device;
+  removeDevice2: Device;
+
+  resetAdd() {
+    this.device1 = null;
+    this.device2 = null;
+  }
+
+  resetRemove() {
+    this.removeDevice1 = null;
+    this.removeDevice2 = null;
+  }
 
   handleGameObjectDown(pointer: Phaser.Input.Pointer, device: Device, event: Phaser.Types.Input.EventData) {
     if (device.name !== "device") return;
 
-    if (!this.device1) {
-      this.device1 = device;
-      return;
-    }
+    if (pointer.leftButtonDown()) {
+      console.log("left");
+      this.resetRemove();
+      if (!this.device1) {
+        this.device1 = device;
+        return;
+      }
 
-    if (!this.device2) {
-      this.device2 = device;
-      this.deviceManager.addLink(this.device1, this.device2);
+      if (!this.device2) {
+        this.device2 = device;
+        this.deviceManager.addLink(this.device1, this.device2);
+        this.resetAdd();
+        return;
+      }
+    } else if (pointer.rightButtonDown()) {
+      console.log("right");
+      this.resetAdd();
 
-      console.log(this.deviceManager.links);
-      this.device1 = null;
-      this.device2 = null;
-      return;
+      if (!this.removeDevice1) {
+        this.removeDevice1 = device;
+        return;
+      }
+
+      if (!this.removeDevice2) {
+        console.log("remove");
+        this.removeDevice2 = device;
+
+        const link = this.deviceManager.findLink(this.removeDevice1, this.removeDevice2);
+        this.deviceManager.removeLink(link);
+        this.resetRemove();
+        return;
+      }
     }
   }
 
